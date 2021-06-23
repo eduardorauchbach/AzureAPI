@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B3ED863-66C9-41E0-9B4E-ACD05129CBE8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATS.API", "ATS.API\ATS.API.csproj", "{79245C81-4405-44C6-B756-CBB694EBBE94}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rauchbach.Common", "Rauchbach.Common\Rauchbach.Common.csproj", "{211AC2C9-B941-4D0B-9E67-5E7356F4F36A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{79245C81-4405-44C6-B756-CBB694EBBE94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79245C81-4405-44C6-B756-CBB694EBBE94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79245C81-4405-44C6-B756-CBB694EBBE94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79245C81-4405-44C6-B756-CBB694EBBE94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{211AC2C9-B941-4D0B-9E67-5E7356F4F36A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{211AC2C9-B941-4D0B-9E67-5E7356F4F36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{211AC2C9-B941-4D0B-9E67-5E7356F4F36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{211AC2C9-B941-4D0B-9E67-5E7356F4F36A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C5B56DD6-2849-4BC2-BCF7-B2B5E2D2CD69}
+	EndGlobalSection
+EndGlobal
