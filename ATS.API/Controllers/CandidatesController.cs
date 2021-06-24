@@ -34,6 +34,7 @@ namespace ATS.API.Controllers
             try
             {
                 _logger.LogCustom(LogLevel.Information, message: CustomLog.Begin);
+                _logger.AddID("Teste", "AAAAA");
 
                 candidates = _candidateService.Get(name: name, jobID: jobID);
 
