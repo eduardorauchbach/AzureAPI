@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Rauchbach.Common;
 using Rauchbach.Common.Configuration;
@@ -17,9 +16,8 @@ namespace ATS.API
 {
     public class Startup
     {
-
         #region Constants
-        private const string ApplicationName = "ATS.API";
+        private const string ApplicationName = "Notifications";
 
         private const string ProductionEnvironment = "Prod";
 
@@ -76,8 +74,6 @@ namespace ATS.API
 
             _ = services.RegisterCommons(ApplicationName, Configuration)
 
-                        .AddScoped<CustomLogFactory>()
-
                         .AddScoped<BlobFileService>()
                         .AddScoped<JobService>()
                         .AddScoped<CandidateService>()
@@ -87,8 +83,8 @@ namespace ATS.API
                         .AddScoped<CandidateRepository>()
                         .AddScoped<CandidateJobRepository>()
 
-                        .AddTransient(_ => new SqlHelper(Configuration))
-                        .AddTransient(_ => new BlobHelper(Configuration));
+                        .AddSingleton(_ => new SqlHelper(Configuration))
+                        .AddSingleton(_ => new BlobHelper(Configuration));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -122,7 +118,6 @@ namespace ATS.API
 
             _ = app.UseAuthorization();
             _ = app.UseHttpsRedirection();
-
             _ = app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }

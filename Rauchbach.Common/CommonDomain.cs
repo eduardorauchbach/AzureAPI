@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Rauchbach.Common.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Exceptions;
@@ -53,10 +54,10 @@ namespace Rauchbach.Common
 
             Configuration = configuration;
 
-            return services.ConfigureSerilog(configPrefix);
-
-            //return services.ConfigureApplicationInsights(configPrefix)
-            //               .ConfigureSerilog(configPrefix);
+            return services.AddScoped<CustomLogFactory>()
+                            .ConfigureApplicationInsights(configPrefix)
+                            .RegisterTelemetryClient(configPrefix, $"Agents{configPrefix}")
+                            .ConfigureSerilog(configPrefix);
         }
 
         public static IServiceCollection RegisterTelemetryClient(this IServiceCollection services, string configPrefix, string roleName)
@@ -76,7 +77,7 @@ namespace Rauchbach.Common
                 throw new ArgumentNullException(nameof(services));
             }
 
-            string instrumentationKey = Configuration[configPrefix];
+            string instrumentationKey = GetConfiguration(AppInsightsPropName, configPrefix);
 
             if (!string.IsNullOrEmpty(instrumentationKey))
             {
@@ -95,26 +96,26 @@ namespace Rauchbach.Common
             return services;
         }
 
-        //private static IServiceCollection ConfigureApplicationInsights(this IServiceCollection services, string configPrefix)
-        //{
-        //    string instrumentationKey = Configuration["ApplicationInsights:InstrumentationKey"];
+        private static IServiceCollection ConfigureApplicationInsights(this IServiceCollection services, string configPrefix)
+        {
+            string instrumentationKey = GetConfiguration(AppInsightsPropName, configPrefix);
 
-        //    if (!string.IsNullOrEmpty(instrumentationKey))
-        //    {
-        //        _ = services.AddScoped(_ =>
-        //        {
-        //            TelemetryClient client = new TelemetryClient(TelemetryConfiguration.CreateDefault())
-        //            {
-        //                InstrumentationKey = instrumentationKey
-        //            };
+            if (!string.IsNullOrEmpty(instrumentationKey))
+            {
+                _ = services.AddScoped(_ =>
+                {
+                    TelemetryClient client = new TelemetryClient(TelemetryConfiguration.CreateDefault())
+                    {
+                        InstrumentationKey = instrumentationKey
+                    };
 
-        //            client.Context.Cloud.RoleName = $"{configPrefix}";
-        //            return client;
-        //        });
-        //    }
+                    client.Context.Cloud.RoleName = $"Agents{configPrefix}";
+                    return client;
+                });
+            }
 
-        //    return services;
-        //}
+            return services;
+        }
 
         private static IServiceCollection ConfigureSerilog(this IServiceCollection services, string configPrefix)
         {
@@ -123,36 +124,31 @@ namespace Rauchbach.Common
                 string authId;
                 string workspaceId;
                 string instrumentationKey;
-
                 Logger logger;
 
-                try
+
+                authId = GetConfiguration(LogAnalyticsAuthId, configPrefix);
+                workspaceId = GetConfiguration(LogAnalyticsWorkspaceId, configPrefix);
+                instrumentationKey = GetConfiguration(AppInsightsPropName, configPrefix);
+
+                if (string.IsNullOrEmpty(instrumentationKey)
+                    || string.IsNullOrEmpty(workspaceId)
+                    || string.IsNullOrEmpty(authId))
                 {
-                    authId = GetConfiguration(LogAnalyticsAuthId, configPrefix);
-                    workspaceId = GetConfiguration(LogAnalyticsWorkspaceId, configPrefix);
-                    instrumentationKey = GetConfiguration(AppInsightsPropName, configPrefix);
-
-                    if (string.IsNullOrEmpty(instrumentationKey)
-                        || string.IsNullOrEmpty(workspaceId)
-                        || string.IsNullOrEmpty(authId))
-                    {
-                        throw new ArgumentNullException(nameof(configPrefix));
-                    }
-
-                    logger = new LoggerConfiguration()
-                                   .MinimumLevel.Verbose()
-                                   .Enrich.FromLogContext()
-                                   .Enrich.WithExceptionDetails()
-                                   .WriteTo.AzureAnalytics(workspaceId, authId, logName: $"{configPrefix}")
-                                   .CreateLogger();
-
-                    _ = builder.AddApplicationInsights(instrumentationKey)
-                               .AddSerilog(logger, dispose: true);
+                    throw new ArgumentNullException(nameof(configPrefix));
                 }
-                catch
-                {
-                    throw;
-                }
+
+                logger = new LoggerConfiguration()
+                               .MinimumLevel.Verbose()
+                               .Enrich.FromLogContext()
+                               .Enrich.WithExceptionDetails()
+                               .WriteTo.AzureAnalytics(workspaceId, authId, logName: $"Agents{configPrefix}")
+                               .CreateLogger();
+
+                _ = builder.AddSerilog(logger);
+
+                //_ = builder.AddApplicationInsights(instrumentationKey)
+                //           .AddSerilog(logger, dispose: true);
             });
         }
 

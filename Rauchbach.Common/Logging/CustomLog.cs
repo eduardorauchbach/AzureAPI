@@ -9,6 +9,33 @@ using System.Runtime.CompilerServices;
 
 namespace Rauchbach.Common.Logging
 {
+    public static class CustomLogExtension
+    {
+        public static void LogCustom(this CustomLog log,
+                                        LogLevel logLevel,
+                                        EventId? eventId = null,
+                                        Exception exception = null,
+                                        string message = null,
+                                        [CallerMemberName] string memberName = "",
+                                        [CallerLineNumber] int sourceLineNumber = 0,
+                                        params ValueTuple<string, object>[] args)
+        {
+            if (log.ILogger.IsEnabled(logLevel))
+            {
+                log.AddLogHistory(logger: log.ILogger,
+                                    logLevel: logLevel,
+                                    eventId: eventId,
+                                    exception: exception,
+                                    message: message,
+                                    memberName: memberName,
+                                    sourceLineNumber: sourceLineNumber,
+                                    args: args
+                                  );
+            }
+        }
+    }
+
+
     public class CustomLog : CustomLogFactory
     {
         public const string Begin = "Begin";
@@ -25,17 +52,68 @@ namespace Rauchbach.Common.Logging
         public CustomLog(CustomLogFactory customLogFactory) : base(customLogFactory.ILoggerFactory)
         {
             IDs = customLogFactory.IDs;
+            LogHistory = customLogFactory.LogHistory;
             ILoggerFactory = customLogFactory.ILoggerFactory;
         }
     }
 
-    public class CustomLogFactory
+    public class CustomLogFactory : IDisposable
     {
+        #region Log Memory
+
+        public class LogItem
+        {
+            public ILogger Logger { get; }
+            public DateTime CurrentTime { get; }
+
+            public LogLevel LogLevel { get; }
+            public EventId? EventId { get; }
+            public Exception Exception { get; }
+            public string Message { get; set; }
+            public string MemberName { get; }
+            public int SourceLineNumber { get; }
+
+            public ValueTuple<string, object>[] Args { get; }
+
+            public LogItem(ILogger logger,
+                                    LogLevel logLevel,
+                                    EventId? eventId = null,
+                                    Exception exception = null,
+                                    string message = null,
+                                    string memberName = "",
+                                    int sourceLineNumber = 0,
+                                    params ValueTuple<string, object>[] args)
+            {
+                Logger = logger;
+                CurrentTime = DateTime.Now;
+
+                LogLevel = logLevel;
+                EventId = eventId;
+                Exception = exception;
+                Message = message;
+                MemberName = memberName;
+                SourceLineNumber = sourceLineNumber;
+                Args = args;
+            }
+        }
+        public class CustomLogHistory
+        {
+            public List<LogItem> LogItems { get; set; } = new List<LogItem>();
+        }
+        public class CustomLogVault
+        {
+            public List<(string, object)> Keys { get; set; } = new List<(string, object)>();
+        }
+
+        #endregion
+
         #region Properties
 
         public CustomLogVault IDs { get; set; }
+        public CustomLogHistory LogHistory { get; set; }
         public ILoggerFactory ILoggerFactory { get; set; }
         #endregion
+
 
         #region Constructor
 
@@ -43,6 +121,7 @@ namespace Rauchbach.Common.Logging
         {
             ILoggerFactory = loggerFactory;
             IDs = new CustomLogVault();
+            LogHistory = new CustomLogHistory();
         }
         #endregion
 
@@ -62,64 +141,73 @@ namespace Rauchbach.Common.Logging
                 IDs.Keys.Add((key, value));
             }
         }
-    }
 
-    public class CustomLogVault
-    {
-        public List<(string, object)> Keys { get; set; } = new List<(string, object)>();
-    }
-
-    public static class CustomLogExtension
-    {
-        public static void LogCustom(this CustomLog log,
-                                        LogLevel logLevel,
-                                        EventId? eventId = null,
-                                        Exception exception = null,
-                                        string message = null,
-                                        [CallerMemberName] string memberName = "",
-                                        [CallerLineNumber] int sourceLineNumber = 0,
-                                        params ValueTuple<string, object>[] args)
+        public void AddLogHistory(ILogger logger,
+                                    LogLevel logLevel,
+                                    EventId? eventId = null,
+                                    Exception exception = null,
+                                    string message = null,
+                                    string memberName = "",
+                                    int sourceLineNumber = 0,
+                                    params ValueTuple<string, object>[] args)
         {
-            if (log.ILogger.IsEnabled(logLevel))
+            LogHistory.LogItems.Add(new LogItem
+                                    (
+                                        logger: logger,
+                                        logLevel: logLevel,
+                                        eventId: eventId,
+                                        exception: exception,
+                                        message: message,
+                                        memberName: memberName,
+                                        sourceLineNumber: sourceLineNumber,
+                                        args: args
+                                    ));
+        }
+
+        private void FinishLogging(LogItem logItem)
+        {
+            logItem.Message ??= CustomLog.LineMarker;
+
+            List<(string, object)> temp = logItem.Args.ToList();
+            foreach ((string, object) item in IDs.Keys)
             {
-                message ??= CustomLog.LineMarker;
-
-                List<(string, object)> temp = args.ToList();
-                foreach ((string, object) item in log.IDs.Keys)
+                if (!temp.Any(x => x.Item1 == item.Item1))
                 {
-                    if (!temp.Any(x => x.Item1 == item.Item1))
-                    {
-                        temp.Add((item.Item1, item.Item2));
-                    }
+                    temp.Add((item.Item1, item.Item2));
                 }
+            }
 
-                CustomLogData customLogData = new CustomLogData(message, memberName, sourceLineNumber, temp.ToArray());
+            CustomLogData customLogData = new CustomLogData(logItem.Message, logItem.MemberName, logItem.SourceLineNumber, temp.ToArray());
 
-                string data = JsonConvert.SerializeObject(customLogData);
+            string data = JsonConvert.SerializeObject(customLogData);
 
-                if (exception is null)
+            if (logItem.Exception is null)
+            {
+                if (logItem.EventId is null)
                 {
-                    if (eventId is null)
-                    {
-                        log.ILogger.Log(logLevel, "{data}", data);
-                    }
-                    else
-                    {
-                        log.ILogger.Log(logLevel, eventId.Value, "{data}", data);
-                    }
+                    logItem.Logger.Log(logItem.LogLevel, "{Timestamp}{data}", logItem.CurrentTime, data);
                 }
                 else
                 {
-                    if (eventId is null)
-                    {
-                        log.ILogger.Log(logLevel, exception, "{data}", data);
-                    }
-                    else
-                    {
-                        log.ILogger.Log(logLevel, eventId.Value, exception, "{data}", data);
-                    }
+                    logItem.Logger.Log(logItem.LogLevel, logItem.EventId.Value, "{Timestamp}{data}", logItem.CurrentTime, data);
                 }
             }
+            else
+            {
+                if (logItem.EventId is null)
+                {
+                    logItem.Logger.Log(logItem.LogLevel, logItem.Exception, "{Timestamp}{data}", logItem.CurrentTime, data);
+                }
+                else
+                {
+                    logItem.Logger.Log(logItem.LogLevel, logItem.EventId.Value, logItem.Exception, "{Timestamp}{data}", logItem.CurrentTime, data);
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            LogHistory.LogItems.ForEach(h => FinishLogging(h));            
         }
 
         #region Helper
