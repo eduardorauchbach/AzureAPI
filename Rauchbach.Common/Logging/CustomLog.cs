@@ -108,7 +108,7 @@ namespace Rauchbach.Common.Logging
         #endregion
 
         #region Properties
-
+        
         public CustomLogVault IDs { get; set; }
         public CustomLogHistory LogHistory { get; set; }
         public ILoggerFactory ILoggerFactory { get; set; }
