@@ -64,6 +64,7 @@ namespace Rauchbach.Common.Logging
         public class LogItem
         {
             public ILogger Logger { get; }
+            public long CurrentStep { get; }
             public DateTime CurrentTime { get; }
 
             public LogLevel LogLevel { get; }
@@ -76,15 +77,17 @@ namespace Rauchbach.Common.Logging
             public ValueTuple<string, object>[] Args { get; }
 
             public LogItem(ILogger logger,
-                                    LogLevel logLevel,
-                                    EventId? eventId = null,
-                                    Exception exception = null,
-                                    string message = null,
-                                    string memberName = "",
-                                    int sourceLineNumber = 0,
-                                    params ValueTuple<string, object>[] args)
+                            long currentStep,
+                            LogLevel logLevel,
+                            EventId? eventId = null,
+                            Exception exception = null,
+                            string message = null,
+                            string memberName = "",
+                            int sourceLineNumber = 0,
+                            params ValueTuple<string, object>[] args)
             {
                 Logger = logger;
+                CurrentStep = currentStep;
                 CurrentTime = DateTime.Now;
 
                 LogLevel = logLevel;
@@ -108,7 +111,7 @@ namespace Rauchbach.Common.Logging
         #endregion
 
         #region Properties
-        
+
         public CustomLogVault IDs { get; set; }
         public CustomLogHistory LogHistory { get; set; }
         public ILoggerFactory ILoggerFactory { get; set; }
@@ -151,9 +154,11 @@ namespace Rauchbach.Common.Logging
                                     int sourceLineNumber = 0,
                                     params ValueTuple<string, object>[] args)
         {
+            long currentStep = (LogHistory.LogItems.Count == 0) ? 1 : (LogHistory.LogItems.Max(x => x.CurrentStep) + 1);
             LogHistory.LogItems.Add(new LogItem
                                     (
                                         logger: logger,
+                                        currentStep: currentStep,
                                         logLevel: logLevel,
                                         eventId: eventId,
                                         exception: exception,
@@ -185,29 +190,29 @@ namespace Rauchbach.Common.Logging
             {
                 if (logItem.EventId is null)
                 {
-                    logItem.Logger.Log(logItem.LogLevel, "{Timestamp}{data}", logItem.CurrentTime, data);
+                    logItem.Logger.Log(logItem.LogLevel, "{Timestamp}{data}{CurrentStep}", logItem.CurrentTime, data, logItem.CurrentStep);
                 }
                 else
                 {
-                    logItem.Logger.Log(logItem.LogLevel, logItem.EventId.Value, "{Timestamp}{data}", logItem.CurrentTime, data);
+                    logItem.Logger.Log(logItem.LogLevel, logItem.EventId.Value, "{Timestamp}{data}{CurrentStep}", logItem.CurrentTime, data, logItem.CurrentStep);
                 }
             }
             else
             {
                 if (logItem.EventId is null)
                 {
-                    logItem.Logger.Log(logItem.LogLevel, logItem.Exception, "{Timestamp}{data}", logItem.CurrentTime, data);
+                    logItem.Logger.Log(logItem.LogLevel, logItem.Exception, "{Timestamp}{data}{CurrentStep}", logItem.CurrentTime, data, logItem.CurrentStep);
                 }
                 else
                 {
-                    logItem.Logger.Log(logItem.LogLevel, logItem.EventId.Value, logItem.Exception, "{Timestamp}{data}", logItem.CurrentTime, data);
+                    logItem.Logger.Log(logItem.LogLevel, logItem.EventId.Value, logItem.Exception, "{Timestamp}{data}{CurrentStep}", logItem.CurrentTime, data, logItem.CurrentStep);
                 }
             }
         }
 
         public void Dispose()
         {
-            LogHistory.LogItems.ForEach(h => FinishLogging(h));            
+            LogHistory.LogItems.ForEach(h => FinishLogging(h));
         }
 
         #region Helper
