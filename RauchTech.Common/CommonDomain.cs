@@ -57,7 +57,7 @@ namespace RauchTech.Common
             return services.AddSingleton(configuration)
                             .AddScoped<ICustomLogFactory, CustomLog>()
                             .ConfigureApplicationInsights(configPrefix)
-                            .RegisterTelemetryClient(configPrefix, $"Agents{configPrefix}")
+                            .RegisterTelemetryClient(configPrefix, $"{configPrefix}")
                             .ConfigureSerilog(configPrefix);
         }
 
@@ -110,7 +110,7 @@ namespace RauchTech.Common
                         InstrumentationKey = instrumentationKey
                     };
 
-                    client.Context.Cloud.RoleName = $"Agents{configPrefix}";
+                    client.Context.Cloud.RoleName = $"{configPrefix}";
                     return client;
                 });
             }
@@ -143,7 +143,7 @@ namespace RauchTech.Common
                                .MinimumLevel.Verbose()
                                .Enrich.FromLogContext()
                                .Enrich.WithExceptionDetails()
-                               .WriteTo.AzureAnalytics(workspaceId, authId, logName: $"Agents{configPrefix}")
+                               .WriteTo.AzureAnalytics(workspaceId, authId, logName: $"{configPrefix}")
                                .CreateLogger();
 
                 _ = builder.AddSerilog(logger);

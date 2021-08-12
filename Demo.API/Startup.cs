@@ -17,11 +17,11 @@ namespace ATS.API
     public class Startup
     {
         #region Constants
-        private const string ApplicationName = "Notifications";
+        private const string ApplicationName = "Demo.API";
 
         private const string ProductionEnvironment = "Prod";
 
-        private const string SwaggerTitle = "ATS";
+        private const string SwaggerTitle = "Demo";
         private const string SwaggerDescription = "Aplicação Demo";
         private const string SwaggerVersion = "v1.0";
 
