@@ -7,6 +7,7 @@ namespace Demo.API.Domain.Model
     {
         #region Data Base Parse
 
+        //(Optional, used to parse Db Column Names against Model Property Names)
         public static readonly Dictionary<string, string> ColumnsLibrary = new Dictionary<string, string>
         {
             { "id", "ID"},

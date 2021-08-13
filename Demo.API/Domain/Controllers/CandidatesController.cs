@@ -41,7 +41,7 @@ namespace Demo.API.Domain.Controllers
                 {
                     CurrentPage = page ?? 0,
                     PageSize = pageSize ?? 0,
-                    OrderBy = orderBy.ToTupleOrder(Job.ColumnsLibrary)
+                    OrderBy = orderBy.ToTupleOrder()
                 };
 
                 candidates = _candidateService.Get(name: name, fileID: fileID, jobID: jobID, page: candidates);
