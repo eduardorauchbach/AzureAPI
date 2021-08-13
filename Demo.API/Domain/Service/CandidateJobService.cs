@@ -1,7 +1,8 @@
-﻿using Demo.API.Domain.Data.Repository;
+﻿using Demo.API.Domain.Repository;
 using Demo.API.Domain.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Demo.API.Domain.Service
 {
@@ -16,66 +17,38 @@ namespace Demo.API.Domain.Service
 
         #region Change Data
 
-        public CandidateJob Insert(CandidateJob candidateJob)
+        public void Save(long id, List<CandidateJob> candidateJobs)
         {
+            List<CandidateJob> oldLinks;
+            List<CandidateJob> toDelete;
+            List<CandidateJob> toSave;
+
             try
             {
-                if (candidateJob.ID == 0)
+                toDelete = new List<CandidateJob>();
+                toSave = new List<CandidateJob>();
+
+                if (candidateJobs != null && candidateJobs.Count > 0)
                 {
-                    if (Get(candidateID: candidateJob.CandidateID, jobID: candidateJob.JobID).Count == 0)
+                    candidateJobs.ForEach(x => x.CandidateID = id);
+
+                    oldLinks = Get(id);
+                    if (oldLinks.Count > 0)
                     {
-                        candidateJob = _candidateJobRepository.Insert(candidateJob);
+                        toDelete = oldLinks.Where(o => !candidateJobs.Any(n => n.CandidateID == o.CandidateID && n.JobID == o.JobID)).ToList();
+
+                        if (toDelete.Count > 0)
+                        {
+                            _candidateJobRepository.Delete(toDelete);
+                        }
                     }
-                    else
+
+                    toSave = candidateJobs.Where(o => !oldLinks.Any(n => n.CandidateID == o.CandidateID && n.JobID == o.JobID)).ToList();
+
+                    if (toSave.Count > 0)
                     {
-                        throw new Exception("Candidato já aplicado para a vaga");
+                        _candidateJobRepository.Insert(toSave);
                     }
-                }
-                else
-                {
-                    throw new Exception("ID diferente de 0, avalie a utilização do PUT");
-                }
-            }
-            catch
-            {
-                throw;
-            }
-
-            return candidateJob;
-        }
-
-        public CandidateJob Update(CandidateJob candidateJob)
-        {
-            try
-            {
-                if (candidateJob.ID == 0)
-                {
-                    throw new Exception("ID diferente de 0, avalie a utilização do POST");
-                }
-                else
-                {
-                    candidateJob = _candidateJobRepository.Update(candidateJob);
-                }
-            }
-            catch
-            {
-                throw;
-            }
-
-            return candidateJob;
-        }
-
-        public void Delete(long id)
-        {
-            try
-            {
-                if (id == 0)
-                {
-                    throw new Exception("ID inválido");
-                }
-                else
-                {
-                    _candidateJobRepository.Delete(id);
                 }
             }
             catch (Exception ex)
@@ -88,22 +61,6 @@ namespace Demo.API.Domain.Service
 
         #region Retrieve Repository
 
-        public CandidateJob Get(long id)
-        {
-            CandidateJob candidateJob;
-
-            try
-            {
-                candidateJob = _candidateJobRepository.Get(id);
-            }
-            catch
-            {
-                throw;
-            }
-
-            return candidateJob;
-        }
-
         public List<CandidateJob> Get(long? candidateID = null, long? jobID = null)
         {
             List<CandidateJob> candidateJobs;
@@ -112,9 +69,9 @@ namespace Demo.API.Domain.Service
             {
                 candidateJobs = _candidateJobRepository.Get(candidateID: candidateID, jobID: jobID);
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
             return candidateJobs;

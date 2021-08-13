@@ -1,5 +1,6 @@
-﻿using Demo.API.Domain.Data.Repository;
+﻿using Demo.API.Domain.Repository;
 using Demo.API.Domain.Model;
+using RauchTech.Common.Model;
 using System;
 using System.Collections.Generic;
 
@@ -97,20 +98,18 @@ namespace Demo.API.Domain.Service
             return job;
         }
 
-        public List<Job> Get(long? candidateID = null)
+        public PageModel<Job> Get(string title = null, string description = null, long? candidateID = null, PageModel<Job> page = null)
         {
-            List<Job> jobs;
-
             try
             {
-                jobs = _jobRepository.Get(candidateID: candidateID);
+                page = _jobRepository.Get(title: title, description: description, candidateID: candidateID, page: page);
             }
             catch
             {
                 throw;
             }
 
-            return jobs;
+            return page;
         }
 
         #endregion

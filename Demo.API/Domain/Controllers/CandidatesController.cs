@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RauchTech.Common.Extensions;
 using RauchTech.Common.Logging;
+using RauchTech.Common.Model;
 using System;
 using System.Collections.Generic;
 
@@ -26,17 +28,23 @@ namespace Demo.API.Domain.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(string name = null, long? jobID = null)
+        public IActionResult Get(string name = null, string fileID = null, long? jobID = null, int? page = null, int? pageSize = null, [FromQuery] string[] orderBy = null)
         {
-            List<Candidate> candidates;
+            PageModel<Candidate> candidates;
             ObjectResult response;
 
             try
             {
                 _logger.LogCustom(LogLevel.Information, message: ICustomLog.Begin);
-                _logger.AddID("Teste", "AAAAA");
 
-                candidates = _candidateService.Get(name: name, jobID: jobID);
+                candidates = new PageModel<Candidate>
+                {
+                    CurrentPage = page ?? 0,
+                    PageSize = pageSize ?? 0,
+                    OrderBy = orderBy.ToTupleOrder(Job.ColumnsLibrary)
+                };
+
+                candidates = _candidateService.Get(name: name, fileID: fileID, jobID: jobID, page: candidates);
 
                 response = Ok(candidates);
 

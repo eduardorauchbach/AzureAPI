@@ -1,6 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Demo.API.Domain.Data.Repository.Builder;
+using Demo.API.Domain.Repository.Builder;
 using Demo.API.Domain.Service.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;

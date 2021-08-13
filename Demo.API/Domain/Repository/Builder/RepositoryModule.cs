@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Demo.API.Domain.Data.Repository.Builder
+namespace Demo.API.Domain.Repository.Builder
 {
     public class RepositoryModule : Module
     {

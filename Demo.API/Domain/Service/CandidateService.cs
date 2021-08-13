@@ -1,5 +1,6 @@
-﻿using Demo.API.Domain.Data.Repository;
+﻿using Demo.API.Domain.Repository;
 using Demo.API.Domain.Model;
+using RauchTech.Common.Model;
 using System;
 using System.Collections.Generic;
 
@@ -33,6 +34,7 @@ namespace Demo.API.Domain.Service
                     }
 
                     candidate = _candidateRepository.Insert(candidate);
+                    _candidateJobService.Save(candidate.ID, candidate.CandidateJobs);
                 }
                 else
                 {
@@ -76,6 +78,7 @@ namespace Demo.API.Domain.Service
                     }
 
                     candidate = _candidateRepository.Update(candidate);
+                    _candidateJobService.Save(candidate.ID, candidate.CandidateJobs);
                 }
             }
             catch (Exception ex)
@@ -126,6 +129,7 @@ namespace Demo.API.Domain.Service
             try
             {
                 candidate = _candidateRepository.Get(id);
+                candidate.CandidateJobs = _candidateJobService.Get(candidateID: id);
             }
             catch (Exception ex)
             {
@@ -135,20 +139,18 @@ namespace Demo.API.Domain.Service
             return candidate;
         }
 
-        public List<Candidate> Get(string name = null, long? jobID = null)
+        public PageModel<Candidate> Get(string name = null, string fileID = null, long? jobID = null, PageModel<Candidate> page = null)
         {
-            List<Candidate> candidates;
-
             try
             {
-                candidates = _candidateRepository.Get(name: name, jobID: jobID);
+                page = _candidateRepository.Get(name: name, fileID: fileID, jobID: jobID, page: page);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
 
-            return candidates;
+            return page;
         }
 
         #endregion

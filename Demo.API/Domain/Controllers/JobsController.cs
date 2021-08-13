@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RauchTech.Common.Extensions;
 using RauchTech.Common.Logging;
+using RauchTech.Common.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Demo.API.Domain.Controllers
 {
@@ -27,16 +30,23 @@ namespace Demo.API.Domain.Controllers
 
 
         [HttpGet]
-        public IActionResult Get(long? candidateID = null)
+        public IActionResult Get(string title = null, string description = null, long? candidateID = null, int? page = null, int? pageSize = null, [FromQuery] string[] orderBy = null)
         {
-            List<Job> jobs;
+            PageModel<Job> jobs;
             ObjectResult response;
 
             try
             {
                 _logger.LogCustom(LogLevel.Information, message: ICustomLog.Begin);
 
-                jobs = _jobService.Get(candidateID: candidateID);
+                jobs = new PageModel<Job>
+                {
+                    CurrentPage = page ?? 0,
+                    PageSize = pageSize ?? 0,
+                    OrderBy = orderBy.ToTupleOrder(Job.ColumnsLibrary)
+                };
+
+                jobs = _jobService.Get(title: title, description: description, candidateID: candidateID, page: jobs);
 
                 response = Ok(jobs);
 
@@ -44,7 +54,7 @@ namespace Demo.API.Domain.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCustom(LogLevel.Error, exception: ex);;
+                _logger.LogCustom(LogLevel.Error, exception: ex); ;
                 response = StatusCode(500, ex.Message);
             }
 
@@ -79,7 +89,7 @@ namespace Demo.API.Domain.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCustom(LogLevel.Error, exception: ex);;
+                _logger.LogCustom(LogLevel.Error, exception: ex); ;
                 response = StatusCode(500, ex.Message);
             }
 
@@ -105,7 +115,7 @@ namespace Demo.API.Domain.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCustom(LogLevel.Error, exception: ex);;
+                _logger.LogCustom(LogLevel.Error, exception: ex); ;
                 response = StatusCode(500, ex.Message);
             }
 
@@ -133,7 +143,7 @@ namespace Demo.API.Domain.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCustom(LogLevel.Error, exception: ex);;
+                _logger.LogCustom(LogLevel.Error, exception: ex); ;
                 response = StatusCode(500, ex.Message);
             }
 

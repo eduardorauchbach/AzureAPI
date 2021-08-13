@@ -1,5 +1,5 @@
 using Demo.API.Domain.Data.Base;
-using Demo.API.Domain.Data.Repository;
+using Demo.API.Domain.Repository;
 using Demo.API.Domain.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
