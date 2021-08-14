@@ -1,4 +1,3 @@
-using Demo.API.Domain.Data.Base;
 using Demo.API.Domain.Repository;
 using Demo.API.Domain.Service;
 using Microsoft.AspNetCore.Builder;
@@ -72,10 +71,7 @@ namespace ATS.API
                 }
             });
 
-            _ = services.RegisterCommons(ApplicationName, Configuration)               
-
-                        //.AddSingleton(_ => new ISqlHelper(Configuration))
-                        .AddSingleton(_ => new BlobHelper(Configuration));
+            _ = services.RegisterCommons(ApplicationName, Configuration);          
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

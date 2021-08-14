@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using RauchTech.Common.Configuration;
+using RauchTech.DataExtensions.AzureBlob;
 
 namespace Demo.API.Domain.Model
 {
@@ -12,7 +13,7 @@ namespace Demo.API.Domain.Model
         public string FileID { get; set; }
         public string File { get; private set; }
 
-        public BlobFile BlobFile { get; set; }
+        public AzureBlobFile BlobFile { get; set; }
 
         public void LoadUrls(IConfiguration config)
         {

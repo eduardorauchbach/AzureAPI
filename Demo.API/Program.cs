@@ -4,6 +4,7 @@ using Demo.API.Domain.Repository.Builder;
 using Demo.API.Domain.Service.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using RauchTech.DataExtensions.AzureBlob.Builder;
 using RauchTech.DataExtensions.Sql.Builder;
 using System.Globalization;
 
@@ -26,7 +27,8 @@ namespace ATS.API
                         _ = builder.RegisterModule<ServiceModule>();
                         _ = builder.RegisterModule<RepositoryModule>();
 
-                        _ = builder.RegisterModule<SqlModule>();                        
+                        _ = builder.RegisterModule<SqlModule>();
+                        _ = builder.RegisterModule<AzureBlobModule>();
                     }))
                     .ConfigureWebHostDefaults(webBuilder =>
                     {

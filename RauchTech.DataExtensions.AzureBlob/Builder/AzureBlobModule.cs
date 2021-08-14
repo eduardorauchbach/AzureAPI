@@ -2,10 +2,10 @@
 using Autofac.Integration.Mef;
 using System;
 
-namespace RauchTech.DataExtensions.Sql.Builder
+namespace RauchTech.DataExtensions.AzureBlob.Builder
 {
 
-    public class SqlModule : Module
+    public class AzureBlobModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
@@ -18,8 +18,8 @@ namespace RauchTech.DataExtensions.Sql.Builder
             builder.RegisterMetadataRegistrationSources();
 
             _ = builder
-                .RegisterType<SqlHelper>()
-                .As<ISqlHelper>()
+                .RegisterType<AzureBlobHelper>()
+                .As<IAzureBlobHelper>()
                 .AsImplementedInterfaces()
                 .SingleInstance()
                 .PropertiesAutowired();

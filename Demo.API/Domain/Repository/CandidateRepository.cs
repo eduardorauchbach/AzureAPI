@@ -1,5 +1,4 @@
-﻿using Demo.API.Domain.Data.Base;
-using Demo.API.Domain.Model;
+﻿using Demo.API.Domain.Model;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using RauchTech.Common.Model;
@@ -179,7 +178,7 @@ namespace Demo.API.Domain.Repository
             {
                 page ??= new PageModel<Candidate>();
 
-                commandCount = new SqlCommand(" SELECT DISTINCT COUNT(*) " +
+                commandCount = new SqlCommand(" SELECT COUNT(DISTINCT A.ID) " +
                                 " FROM Candidate A LEFT JOIN" +
                                 " CandidateJob B ON A.ID = B.CandidateID");
 

@@ -1,28 +1,27 @@
-﻿using Demo.API.Domain.Model;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using RauchTech.Common.Configuration;
 using System;
 using System.IO;
 
-namespace Demo.API.Domain.Data.Base
+namespace RauchTech.DataExtensions.AzureBlob
 {
-    public class BlobHelper
+    public class AzureBlobHelper : IAzureBlobHelper
     {
         private readonly string _blobConnection;
         private readonly string _blobFolder;
 
         private readonly IConfiguration _config;
 
-        public BlobHelper(IConfiguration config)
+        public AzureBlobHelper(IConfiguration config)
         {
             _config = config;
             _blobConnection = _config.GetValue("Blob:Connection")[0];
             _blobFolder = _config.GetValue("Blob:Folder")[0];
         }
 
-        public BlobFile Get(string id)
+        public AzureBlobFile Get(string id)
         {
             CloudStorageAccount storageAccount;
 
@@ -32,7 +31,7 @@ namespace Demo.API.Domain.Data.Base
 
             CloudBlob cloudBlob;
 
-            BlobFile blobFile;
+            AzureBlobFile blobFile;
 
             try
             {
@@ -45,7 +44,7 @@ namespace Demo.API.Domain.Data.Base
 
                 _ = cloudBlob.FetchAttributesAsync();
 
-                blobFile = new BlobFile();
+                blobFile = new AzureBlobFile();
                 blobFile.ID = cloudBlob.Name;
                 blobFile.Created = cloudBlob.Properties.Created?.DateTime;
 
@@ -63,7 +62,7 @@ namespace Demo.API.Domain.Data.Base
             return blobFile;
         }
 
-        public BlobFile InsertOrUpdate(BlobFile blobFile, string oldID = null)
+        public AzureBlobFile InsertOrUpdate(AzureBlobFile blobFile, string oldID = null)
         {
             CloudStorageAccount storageAccount;
 

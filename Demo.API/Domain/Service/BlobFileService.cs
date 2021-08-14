@@ -1,5 +1,4 @@
-﻿using Demo.API.Domain.Data.Base;
-using Demo.API.Domain.Model;
+﻿using RauchTech.DataExtensions.AzureBlob;
 using System;
 using System.IO;
 
@@ -7,16 +6,16 @@ namespace Demo.API.Domain.Service
 {
     public class BlobFileService
     {
-        private readonly BlobHelper _blobHelper;
+        private readonly IAzureBlobHelper _blobHelper;
 
-        public BlobFileService(BlobHelper blobHelper)
+        public BlobFileService(IAzureBlobHelper blobHelper)
         {
             _blobHelper = blobHelper;
         }
 
         #region Change Data
 
-        public BlobFile Insert(BlobFile blobFile)
+        public AzureBlobFile Insert(AzureBlobFile blobFile)
         {
             try
             {
@@ -46,7 +45,7 @@ namespace Demo.API.Domain.Service
             return blobFile;
         }
 
-        public BlobFile Update(BlobFile blobFile)
+        public AzureBlobFile Update(AzureBlobFile blobFile)
         {
             string oldID;
 
@@ -100,9 +99,9 @@ namespace Demo.API.Domain.Service
 
         #region Retrieve Repository
 
-        public BlobFile Get(string id)
+        public AzureBlobFile Get(string id)
         {
-            BlobFile blobFile;
+            AzureBlobFile blobFile;
 
             try
             {

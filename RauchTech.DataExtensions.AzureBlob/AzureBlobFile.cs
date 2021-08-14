@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Demo.API.Domain.Model
+namespace RauchTech.DataExtensions.AzureBlob
 {
-    public class BlobFile
+    public class AzureBlobFile
     {
         public string ID { get; set; }
         public string Name { get; set; }

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RauchTech.Common\RauchTech.Common.csproj" />
+    <ProjectReference Include="..\RauchTech.DataExtensions.AzureBlob\RauchTech.DataExtensions.AzureBlob.csproj" />
     <ProjectReference Include="..\RauchTech.DataExtensions.Sql\RauchTech.DataExtensions.Sql.csproj" />
   </ItemGroup>
 

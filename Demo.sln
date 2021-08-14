@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RauchTech.Common", "RauchTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RauchTech.DataExtensions.Sql", "RauchTech.DataExtensions.Sql\RauchTech.DataExtensions.Sql.csproj", "{C637018D-BF4D-460F-B00E-28DF2A0AA2A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RauchTech.DataExtensions.AzureBlob", "RauchTech.DataExtensions.AzureBlob\RauchTech.DataExtensions.AzureBlob.csproj", "{69813297-0813-4453-B436-F24B5C0316D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{C637018D-BF4D-460F-B00E-28DF2A0AA2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C637018D-BF4D-460F-B00E-28DF2A0AA2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C637018D-BF4D-460F-B00E-28DF2A0AA2A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69813297-0813-4453-B436-F24B5C0316D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69813297-0813-4453-B436-F24B5C0316D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69813297-0813-4453-B436-F24B5C0316D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69813297-0813-4453-B436-F24B5C0316D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

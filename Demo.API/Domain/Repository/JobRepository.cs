@@ -178,7 +178,7 @@ namespace Demo.API.Domain.Repository
             {
                 page ??= new PageModel<Job>();
 
-                commandCount = new SqlCommand(" SELECT DISTINCT COUNT(*) " +
+                commandCount = new SqlCommand(" SELECT COUNT(DISTINCT A.ID) " +
                                 " FROM Job A LEFT JOIN" +
                                 " CandidateJob B ON A.ID = B.JobID");
 
