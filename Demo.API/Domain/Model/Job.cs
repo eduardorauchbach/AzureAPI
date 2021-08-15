@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
 using System.Collections.Generic;
 
 namespace Demo.API.Domain.Model
@@ -21,5 +21,15 @@ namespace Demo.API.Domain.Model
         public string Title { get; set; }
 
         public string Description { get; set; }
+    }
+
+    public class ValidatorJob : AbstractValidator<Job>
+    {
+        public ValidatorJob()
+        {
+            RuleFor(x => x.ID).NotEmpty().WithMessage("Favor preencher o campo");
+            RuleFor(x => x.Title).NotEmpty().WithMessage("Favor preencher o campo");
+            RuleFor(x => x.Title).Must(x => x.Length <= 50).WithMessage("Tamanho máximo excedido: 50");
+        }
     }
 }

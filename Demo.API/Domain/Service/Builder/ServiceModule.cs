@@ -17,11 +17,6 @@ namespace Demo.API.Domain.Service.Builder
             builder.RegisterMetadataRegistrationSources();
 
             _ = builder
-                .RegisterType<BlobFileService>()
-                .InstancePerLifetimeScope()
-                .PropertiesAutowired();
-
-            _ = builder
                 .RegisterType<CandidateJobService>()
                 .InstancePerLifetimeScope()
                 .PropertiesAutowired();

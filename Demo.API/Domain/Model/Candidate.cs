@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FluentValidation;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using RauchTech.Common.Configuration;
 using RauchTech.DataExtensions.AzureBlob;
 
@@ -24,5 +25,15 @@ namespace Demo.API.Domain.Model
         }
 
         public List<CandidateJob> CandidateJobs { get; set; }
+    }
+
+    public class ValidatorCandidate : AbstractValidator<Candidate>
+    {
+        public ValidatorCandidate()
+        {
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Favor preencher o campo");
+            RuleFor(x => x.Name).Must(x => x.Length <= 50).WithMessage("Tamanho máximo excedido: 50");
+            RuleFor(x => x.FileID).Must(x => x.Length <= 50).WithMessage("Tamanho máximo excedido: 50");
+        }
     }
 }

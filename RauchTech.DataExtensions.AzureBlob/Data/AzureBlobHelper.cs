@@ -7,7 +7,7 @@ using System.IO;
 
 namespace RauchTech.DataExtensions.AzureBlob
 {
-    public class AzureBlobHelper : IAzureBlobHelper
+    internal class AzureBlobHelper
     {
         private readonly string _blobConnection;
         private readonly string _blobFolder;

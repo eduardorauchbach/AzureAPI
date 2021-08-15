@@ -1,16 +1,17 @@
-﻿using RauchTech.DataExtensions.AzureBlob;
+﻿using Microsoft.Extensions.Configuration;
+using RauchTech.DataExtensions.AzureBlob;
 using System;
 using System.IO;
 
-namespace Demo.API.Domain.Service
+namespace RauchTech.DataExtensions.AzureBlob
 {
-    public class BlobFileService
+    public class AzureBlobService : IAzureBlobService
     {
-        private readonly IAzureBlobHelper _blobHelper;
+        private readonly AzureBlobHelper _blobHelper;
 
-        public BlobFileService(IAzureBlobHelper blobHelper)
+        public AzureBlobService(IConfiguration configuration)
         {
-            _blobHelper = blobHelper;
+            _blobHelper = new AzureBlobHelper(configuration);
         }
 
         #region Change Data

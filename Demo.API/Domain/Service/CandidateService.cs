@@ -3,6 +3,7 @@ using Demo.API.Domain.Model;
 using RauchTech.Common.Model;
 using System;
 using System.Collections.Generic;
+using RauchTech.DataExtensions.AzureBlob;
 
 namespace Demo.API.Domain.Service
 {
@@ -10,9 +11,9 @@ namespace Demo.API.Domain.Service
     {
         private readonly CandidateRepository _candidateRepository;
         private readonly CandidateJobService _candidateJobService;
-        private readonly BlobFileService _blobFileService;
+        private readonly IAzureBlobService _blobFileService;
 
-        public CandidateService(CandidateRepository candidateRepository, CandidateJobService candidateJobService, BlobFileService blobFileService)
+        public CandidateService(CandidateRepository candidateRepository, CandidateJobService candidateJobService, IAzureBlobService blobFileService)
         {
             _candidateRepository = candidateRepository;
             _candidateJobService = candidateJobService;

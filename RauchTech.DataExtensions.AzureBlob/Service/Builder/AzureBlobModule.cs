@@ -18,10 +18,10 @@ namespace RauchTech.DataExtensions.AzureBlob.Builder
             builder.RegisterMetadataRegistrationSources();
 
             _ = builder
-                .RegisterType<AzureBlobHelper>()
-                .As<IAzureBlobHelper>()
+                .RegisterType<AzureBlobService>()
+                .As<IAzureBlobService>()
                 .AsImplementedInterfaces()
-                .SingleInstance()
+                .InstancePerLifetimeScope()
                 .PropertiesAutowired();
         }
     }
